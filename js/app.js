@@ -2,7 +2,7 @@
 //! Cardholder name
 const nameCard = document.querySelector('.card__details-name');
 const nameInput = document.getElementById('cardholder');
-const nameError = document.querySelector('.form__cardholder--error');
+const nameErrorDiv = document.querySelector('.form__cardholder--error');
 
 nameInput.addEventListener('input', () => {
 
@@ -52,12 +52,35 @@ const monthInput = document.getElementById('cardMonth');
 const monthErrorDiv = document.querySelector('.form__input-mm--error');
 
 monthInput.addEventListener('input', () => {
-    if (monthInput.value >= 0 && monthInput.value <= 12) {    
-        monthCard.innerText = monthInput.value;
-    }else{
-        showError(monthInput,monthErrorDiv,'Month incorrect');
-    } 
+    monthCard.innerText = monthInput.value;
 })
+
+
+
+
+//! Year
+
+const yearCard = document.querySelector('.card__year');
+const yearInput = document.getElementById('cardYear');
+const yearErrorDiv = document.querySelector('.form__input-yy--error');
+
+yearInput.addEventListener('input', () => {
+    yearCard.innerText = yearInput.value;
+});
+
+
+
+
+//! Cvc
+
+const cvcCard = document.querySelector('.card-back__cvc');
+const cvcInput = document.getElementById('cardCvc');
+const cvcErrorDiv = document.querySelector('.form__input-cvc--error');
+cvcInput.addEventListener('input', () =>{
+    cvcCard.innerText = cvcInput.value;
+});
+
+
 
 
 
@@ -65,8 +88,53 @@ monthInput.addEventListener('input', () => {
 
 const btnConfirm = document.querySelector('.form__submit');
 
-btnConfirm.addEventListener('click', () => {
+btnConfirm.addEventListener('click', (e) => {
+    e.preventDefault();
 
+
+    //* Verify that is not blank
+    
+    isFilled(nameInput, nameErrorDiv);
+    
+    if(isFilled(numberInput, numberErrorDiv)){
+       if(numberInput.value.length == 19){
+        showError(numberInput,numberErrorDiv,'', false);
+       }else{
+        showError(numberInput,numberErrorDiv,'Incomplete card number');
+       }
+    };
+
+
+    if (isFilled(monthInput, monthErrorDiv)) {
+        if (parseInt(monthInput.value) > 0 && parseInt(monthInput.value) <=12 ) {
+            showError(monthInput, monthErrorDiv, '', false);
+        } else{
+            showError(monthInput, monthErrorDiv,'Wrong month');
+        }
+    }
+
+    if (isFilled(yearInput, yearErrorDiv)) {
+        if (parseInt(yearInput.value) >= 22 && parseInt(yearInput.value) <=30 ) {
+            showError(yearInput, yearErrorDiv, '', false);
+        } else{
+            showError(yearInput, yearErrorDiv,'Wrong month');
+        }
+    }
+
+
+    
+
+    
+    if (isFilled(cvcInput, cvcErrorDiv)){
+       if(cvcInput.value.length == 3){
+        showError(cvcInput, cvcErrorDiv,'', false);
+       }else{
+        showError(cvcInput, cvcErrorDiv, 'Wrong cvc')
+       }
+    }
+
+
+    
 })
 
 
@@ -82,3 +150,13 @@ function showError(divInput, divError, message, show = true){
         divInput.style.borderColor = 'hsl(279, 6%, 55%)';
     }
 };
+
+function isFilled(divInput, divError){
+    if (divInput.value.length>0) {
+        showError(divInput, divError,'', false);
+        return true;
+    } else{
+        showError(divInput, divError,"Can't be blank");
+        return false;
+    }
+}
