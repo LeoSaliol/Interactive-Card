@@ -1,4 +1,6 @@
 
+
+
 //! Cardholder name
 const nameCard = document.querySelector('.card__details-name');
 const nameInput = document.getElementById('cardholder');
@@ -32,14 +34,12 @@ numberInput.addEventListener('input', (e) => {
     }
 
 
-    let regExp = /[A-z]/g;
-    if (regExp.test(numberInput.value)) {
-        showError(numberInput, numberErrorDiv, 'Wrong format, numbers only');
-        
-    } else{
-        numberInput.value = inputValue.replace(/\s/g, '').replace(/([0-9]{4})/g, '$1 ').trim();   
-        showError(numberInput, numberErrorDiv,'', false);
-    }
+    
+    numberInput.value = inputValue.replace(/\s/g, '').replace(/([0-9]{4})/g, '$1 ').trim();   
+    // showError(numberInput, numberErrorDiv,'', false);
+     
+
+    onlyNumbers(numberInput,numberErrorDiv);
 
 });
 
@@ -53,7 +53,9 @@ const monthErrorDiv = document.querySelector('.form__input-mm--error');
 
 monthInput.addEventListener('input', () => {
     monthCard.innerText = monthInput.value;
+    onlyNumbers(monthInput,monthErrorDiv);
 })
+
 
 
 
@@ -66,6 +68,7 @@ const yearErrorDiv = document.querySelector('.form__input-yy--error');
 
 yearInput.addEventListener('input', () => {
     yearCard.innerText = yearInput.value;
+    onlyNumbers(yearInput,yearErrorDiv);
 });
 
 
@@ -78,6 +81,7 @@ const cvcInput = document.getElementById('cardCvc');
 const cvcErrorDiv = document.querySelector('.form__input-cvc--error');
 cvcInput.addEventListener('input', () =>{
     cvcCard.innerText = cvcInput.value;
+    onlyNumbers(cvcInput,cvcErrorDiv);
 });
 
 
@@ -88,19 +92,29 @@ cvcInput.addEventListener('input', () =>{
 
 const btnConfirm = document.querySelector('.form__submit');
 
+let nameValidation = false;
+let numberValidation = false;
+let monthValidation = false;
+let yearValidation = false;
+let cvcValidation = false;
+
 btnConfirm.addEventListener('click', (e) => {
     e.preventDefault();
 
 
-    //* Verify that is not blank
+    //* Verify that is not blank    
+    if (isFilled(nameInput, nameErrorDiv)){
+        nameValidation = true;
+    } 
     
-    isFilled(nameInput, nameErrorDiv);
     
     if(isFilled(numberInput, numberErrorDiv)){
        if(numberInput.value.length == 19){
         showError(numberInput,numberErrorDiv,'', false);
+        numberValidation = true;
        }else{
         showError(numberInput,numberErrorDiv,'Incomplete card number');
+        
        }
     };
 
@@ -108,34 +122,46 @@ btnConfirm.addEventListener('click', (e) => {
     if (isFilled(monthInput, monthErrorDiv)) {
         if (parseInt(monthInput.value) > 0 && parseInt(monthInput.value) <=12 ) {
             showError(monthInput, monthErrorDiv, '', false);
+            monthValidation = true;
         } else{
             showError(monthInput, monthErrorDiv,'Wrong month');
+            
         }
     }
 
     if (isFilled(yearInput, yearErrorDiv)) {
         if (parseInt(yearInput.value) >= 22 && parseInt(yearInput.value) <=30 ) {
             showError(yearInput, yearErrorDiv, '', false);
+            yearValidation = true;
         } else{
             showError(yearInput, yearErrorDiv,'Wrong month');
+            
         }
     }
 
 
-    
-
-    
     if (isFilled(cvcInput, cvcErrorDiv)){
        if(cvcInput.value.length == 3){
         showError(cvcInput, cvcErrorDiv,'', false);
+        cvcValidation = true;
        }else{
-        showError(cvcInput, cvcErrorDiv, 'Wrong cvc')
+        showError(cvcInput, cvcErrorDiv, 'Wrong cvc');
+        
        }
     }
 
-
-    
+    if(nameValidation  && numberValidation  && monthValidation  && yearValidation && cvcValidation ){
+        formSection.style.display = 'none';
+        thankSection.style.display = 'block';
+    }
+   
 })
+
+
+//! Form 
+
+const formSection = document.querySelector('.form');
+const thankSection = document.querySelector('.thanks-section');
 
 
 
@@ -159,4 +185,16 @@ function isFilled(divInput, divError){
         showError(divInput, divError,"Can't be blank");
         return false;
     }
+}
+
+function onlyNumbers(divInput, divError){
+    let regExp = /[A-z]/g;
+    if(regExp.test(divInput.value)){
+        showError(divInput, divError,'Wrong format, numbers only');
+        
+    } else {
+        showError(divInput,divError,'',false);
+        
+    }
+
 }
